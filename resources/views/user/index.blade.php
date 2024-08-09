@@ -18,26 +18,26 @@
     </div>
     <!-- ############## TABLA ############# -->
     <div class="table-responsive">
-        <table class="table table-sm table-hover table-bordered text-center align-middle">
+        <table class="table table-sm table-hover text-center align-middle">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>{{__('Full Name')}}</th>
-                    <th>{{__('Birthdate')}}</th>
-                    <th>{{__('Phone')}}</th>
-                    <th>{{__('Email')}}</th>
-                    <th>{{__('Photo')}}</th>
+                    <th scope="col">#</th>
+                    <th scope="col">{{__('Full Name')}}</th>
+                    <th scope="col">{{__('Birthdate')}}</th>
+                    <th scope="col">{{__('Phone')}}</th>
+                    <th scope="col">{{__('Email')}}</th>
+                    <th scope="col">{{__('Photo')}}</th>
                     <th colspan="3">{{__('Actions')}}</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="table-group-divider">
                 @foreach($users as $user)
                 <tr>
                     <td>{{ $user->id }}</td>
-                    <td>{{ $user->name.' '.$user->first_lastname.' '.$user->second_lastname }}</td>
-                    <td>{{ $user->birthdate }}</td>
-                    <td>{{ $user->phone }}</td>
-                    <td>{{ $user->email }}</td>
+                    <td class="text-truncate">{{ $user->name.' '.$user->first_lastname.' '.$user->second_lastname }}</td>
+                    <td class="text-nowrap">{{ $user->birthdate }}</td>
+                    <td class="text-nowrap text-truncate">{{ $user->phone }}</td>
+                    <td class="text-truncate">{{ $user->email }}</td>
                     <td>
                         <div class="d-flex align-items-center justify-content-center">
                             <div class="flex-shrink-0 rounded-circle overflow-hidden">
@@ -59,9 +59,16 @@
                         </button>
                     </td>
                     <td>
-                        <form action="" method="POST">
+                        <form action="{{ route('user.destroy', $user->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger btnDelete"
+                                data-title="{{__('Are you sure to delete this user?')}}"
+                                data-text="{{__('This action cannot be undone')}}"
+                                data-confirm-button-text="{{__('Yes, delete it')}}"
+                                data-cancel-button-text="{{__('Cancel')}}">
+                                <i class="fa-solid fa-user-xmark"></i>
+                            </button>
                         </form>
                     </td>
                 </tr>
@@ -89,7 +96,8 @@
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                     {{__('Close')}}
                                 </button>
-                                <button type="submit" class="btn btn-primary" form="updateUserForm{{ $user->id }}">{{__('Update')}}</button>
+                                <button type="submit" class="btn btn-primary" 
+                                    form="updateUserForm{{ $user->id }}">{{__('Update')}}</button>
                             </div>
                         </div>
                     </div>

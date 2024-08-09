@@ -19,15 +19,22 @@
                     <h5 class="mt-3 mb-0">{{ $user->name }}</h5>
                     <p class="fw-normal fs-6 text-secondary">{{__('Role')}}</p>
 
-                    <!-- Botones de control -->
-                    <a href="" class="btn btn-outline-primary">
-                        <i class="fa-solid fa-user-pen"></i>
-                        {{__('Edit')}}
-                    </a>
-                    <a href="" class="btn btn-outline-danger">
-                        <i class="fa-solid fa-user-slash"></i>
-                        {{__('Delete')}}
-                    </a>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <!-- Botones de control -->
+                        <button type="button" class="btn mx-1 btn-outline-primary" data-bs-toggle="modal"
+                            data-bs-target="#updateUser">
+                            <i class="fa-solid fa-user-pen"></i>
+                            {{__('Edit')}}
+                        </button>
+                        <form action="{{ route('user.destroy', $user->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn mx-1 btn-outline-danger">
+                                <i class="fa-solid fa-user-xmark"></i>
+                                {{__('Delete')}}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,7 +43,7 @@
         <div class="col-12 col-md-8">
             <div class="card mb-4">
                 <div class="card-header bg-body-secondary">
-                <h3 class="fs-4 py-2">{{__('General Info')}}</h3>
+                    <h3 class="fs-4 py-2">{{__('General Info')}}</h3>
                 </div>
                 <div class="card-body">
                     <!-- Nombre completo -->
@@ -96,4 +103,36 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal Body -->
+<!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
+<div class="modal fade" id="updateUser" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog"
+    aria-labelledby="modalTitleId" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">
+                    {{__('Modify '. $user->name )}}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ route('user.update', $user->id) }}" id="updateUserForm{{ $user->id }}"
+                    role="form" enctype="multipart/form-data">
+                    @method('PUT')
+                    @csrf
+                    @include('user.form')
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+                <button type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
