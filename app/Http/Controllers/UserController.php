@@ -107,7 +107,7 @@ class UserController extends Controller
     }
 
     /**
-     * Función para actualizar registro
+     * Función para actualizar registro | Administradores y empleados
      * Entradas: Datos nuevos para actualizar, usuario a modificar
      * Salidas: [
      * - Error: Anomalías en el formato o valor de los inputs
@@ -116,13 +116,33 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, $id): RedirectResponse
     {
+        // Búsqueda del usuario
         $user = User::find($id);
-        // Validar y actualizar usuario
-        $user->update($request->validated());
-
+        // Construcción de fecha
+        $birthdate = Carbon::createFromDate(
+            $request->input('year'),
+            $request->input('month'),
+            $request->input('day')
+        );
+        // Creación de array para validar y asignar valores
+        $userData = array_merge(
+            $request->validated(),
+            [
+                'name' => $request->input('name'),
+                'first_lastname' => $request->input('first_lastname'),
+                'second_lastname' => $request->input('second_lastname'),
+                'birthdate' => $birthdate,
+                'phone' => $request->input('phone'),
+                'email' => $request->input('email'),
+            ]
+        );
+        // Actualizar usuario
+        $user->update($userData);
+        // Redireccionar a la ruta index
         return Redirect::route('user.index')
             ->with('success', 'User updated successfully');
     }
+
 
     public function destroy($id): RedirectResponse
     {
