@@ -1,0 +1,24 @@
+/* Color del texto por defecto */
+.pagination .page-link {
+    color: #077074;
+}
+/* Cuando el índice del paginador está activo */
+.pagination .page-item.active .page-link {
+    background-color: #1B9FA3;
+    border-color: #1B9FA3;
+    color: #ffffff;
+}
+/* Al pasar el mouse por los botones */
+.pagination .page-link:hover {
+    color: #1B9FA3;
+}
+/* Cambia el color del contorno al enfocar */
+.pagination .page-link:focus {
+    box-shadow: 0 0 0 0.25rem rgba(27, 159, 163, 0.5); 
+}
+/* Cuando el índice del paginador está deshabilitado */
+.pagination .page-item.disabled .page-link {
+    color: #1B9FA3;
+    background-color: #ffffff;
+    border-color: #1B9FA3;
+}

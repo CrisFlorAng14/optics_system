@@ -1,0 +1,28 @@
+/* Para el contenedor del formulario y encabezado */
+.card, .card-header {
+    border:none;
+}
+/* Iconos */
+.input-group-text {
+    background-color: #CFCFCF;
+}
+/* Botón de registro */
+.btn {
+    color: #fff;
+    background-color: #1B9FA3;
+    transition: 0.5s;
+}
+.btn:hover {
+    color: #1B9FA3;
+    background-color: #fff;
+    border: solid 1px #1B9FA3;
+}
+/* Botón de Login */
+.btn-login {
+    color: #1B9FA3;
+    background-color: transparent;
+    text-decoration: none;
+}
+.btn-login:hover {
+    text-decoration: underline;
+}
