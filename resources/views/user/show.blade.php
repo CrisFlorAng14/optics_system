@@ -29,7 +29,11 @@
                         <form action="{{ route('user.destroy', $user->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn mx-1 btn-outline-danger">
+                            <button type="submit" class="btn mx-1 btn-outline-danger btnDelete"
+                                data-title="{{__('Are you sure to delete this user?')}}"
+                                data-text="{{__('This action cannot be undone')}}"
+                                data-confirm-button-text="{{__('Yes, delete it')}}"
+                                data-cancel-button-text="{{__('Cancel')}}">
                                 <i class="fa-solid fa-user-xmark"></i>
                                 {{__('Delete')}}
                             </button>
@@ -105,8 +109,7 @@
 </div>
 
 
-<!-- Modal Body -->
-<!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
+<!-- Modal para actualización de usuario -->
 <div class="modal fade" id="updateUser" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog"
     aria-labelledby="modalTitleId" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
@@ -127,12 +130,30 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    Close
+                    {{__('Cancel')}}
                 </button>
-                <button type="button" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary" form="updateUserForm{{ $user->id }}">{{__('Save')}}</button>
             </div>
         </div>
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Si session(modal) es para actualizar, existe el ID y hay errores -> mostrar el modal de actualización
+        @if (session('modal') == 'update' && $errors->any())
+            var updateUserModal = new bootstrap.Modal(document.getElementById('updateUser'));
+            updateUserModal.show();
+        @endif
+    });
+
+    // Valores para mensajes de alerta
+    @if(session()->has('update'))
+        var sessionType = @json(session('update')); // Su session es 'update'
+        var alertTitle = @json(__('User updated successfully')); // Título del mensaje
+    @elseif (session()->has('delete'))
+        var sessionType = @json(session('delete')); // Su session es 'delete'
+        var alertTitle = @json(__('User deleted successfully')); // Título del mensaje
+    @endif
+</script>
 @endsection

@@ -172,7 +172,7 @@ class UserController extends Controller
         $user->update($userData);
 
         
-        return Redirect::route('user.index')
+        return Redirect::back()
             ->with('update', 'update');
     }
     

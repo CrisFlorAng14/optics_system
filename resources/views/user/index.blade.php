@@ -64,10 +64,11 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btnDelete btn-sm btn-outline-danger"
-                            data-title="{{__('Are you sure to delete this user?')}}"
-                            data-text="{{__('This action cannot be undone')}}"
-                            data-confirm-button-text="{{__('Yes, delete it')}}"
-                            data-cancel-button-text="{{__('Cancel')}}"><i class="fa-solid fa-trash"></i></button>
+                                data-title="{{__('Are you sure to delete this user?')}}"
+                                data-text="{{__('This action cannot be undone')}}"
+                                data-confirm-button-text="{{__('Yes, delete it')}}"
+                                data-cancel-button-text="{{__('Cancel')}}"><i class="fa-solid fa-trash"></i>
+                            </button>
                         </form>
                     </td>
                 </tr>
@@ -143,7 +144,7 @@
     Entradas: [Errores, Formulario de registro, Formulario de edición]
     Salidas: [Ventana modal según el tipo]
 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Si session(modal) es para actualizar, existe el ID y hay errores -> mostrar el modal de actualización
@@ -151,7 +152,7 @@
             var userId = '{{ session('user_id') }}';
             var updateUserModal = new bootstrap.Modal(document.getElementById('updateUser' + userId));
             updateUserModal.show();
-        // Si session(moda) es para agregar y hay errores -> mostrar el modal de registro
+        // Si session(modal) es para agregar y hay errores -> mostrar el modal de registro
         @elseif (session('modal') == 'new' && $errors->any())
             var newUserModal = new bootstrap.Modal(document.getElementById('newUserModal'));
             newUserModal.show();
