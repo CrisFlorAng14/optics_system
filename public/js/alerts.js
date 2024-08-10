@@ -26,4 +26,19 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+
+    
+    if(sessionType){
+        alertMessage();
+    }
+    function alertMessage() {
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: alertTitle,
+            showConfirmButton: false,
+            timer: 1500,
+        });
+    }
 });

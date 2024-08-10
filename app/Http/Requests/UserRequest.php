@@ -27,7 +27,7 @@ class UserRequest extends FormRequest
         $currentYear = Carbon::now()->year;
         $minYear = $currentYear - 100;
         
-        return [
+        $rules = [
 			'name' => 'required|string|max:50',
 			'first_lastname' => 'required|string|max:50',
 			'second_lastname' => 'nullable|string|max:50',
@@ -44,5 +44,15 @@ class UserRequest extends FormRequest
                 Rule::unique('users')->ignore($this->route('id')),
             ],
         ];
+
+        if ($this->isMethod('post') && $this->routeIs('user.store')) {
+            session()->flash('modal', 'new');
+        } elseif ($this->isMethod('put') && $this->routeIs('user.update')) {
+            $userId = $this->route('id');
+            session()->flash('modal', 'update');
+            session()->flash('user_id', $userId);
+        }
+
+        return $rules;
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 
 class UserController extends Controller
 {
@@ -20,8 +21,38 @@ class UserController extends Controller
     public function index(Request $request): View
     {
         $users = User::paginate(10);
+    
+        // Transformar las fechas en cada usuario de la colección paginada
+        $users->getCollection()->transform(function ($user) {
+            $user->birthdate = $this->dateTransform($user->birthdate);
+            return $user;
+        });
+        
         return view('user.index', compact('users'));
     }
+    /**
+     * Función para transformar la fecha según el idioma
+     * Entradas: Fecha
+     * Salidas: Fecha en diferentes formatos
+     */
+    public function dateTransform($date)
+    {
+        // Obtención del idioma
+        $locale = app()->getLocale();
+        // Conversión del formato de la fecha
+        $date = Carbon::parse($date);
+        // Define los formatos para cada idioma
+        $formats = [
+            'en' => 'DD-MMM-YYYY', // Formato en inglés
+            'es' => 'DD-MM-YYYY', // Formato en español
+        ];
+        // Si el locale actual no está en el array de formatos, usa un formato predeterminado
+        $format = $formats[$locale];
+        // Configura el locale en Carbon y devuelve el formato
+        return $date->locale($locale)->isoFormat($format);
+    }
+    
+
 
     /**
      * Función para almacenar un registro
@@ -59,7 +90,7 @@ class UserController extends Controller
     
         // Redirigir con mensaje de éxito
         return Redirect::route('user.index')
-            ->with('success', 'User created successfully.');
+            ->with('store', 'store');
     }
 
     /**
@@ -107,7 +138,7 @@ class UserController extends Controller
     }
 
     /**
-     * Función para actualizar registro | Administradores y empleados
+     * Función para actualizar registro
      * Entradas: Datos nuevos para actualizar, usuario a modificar
      * Salidas: [
      * - Error: Anomalías en el formato o valor de los inputs
@@ -116,15 +147,15 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, $id): RedirectResponse
     {
-        // Búsqueda del usuario
         $user = User::find($id);
-        // Construcción de fecha
+        
+        // Construir el array con todos los datos a actualizar
         $birthdate = Carbon::createFromDate(
             $request->input('year'),
             $request->input('month'),
             $request->input('day')
         );
-        // Creación de array para validar y asignar valores
+        
         $userData = array_merge(
             $request->validated(),
             [
@@ -136,19 +167,21 @@ class UserController extends Controller
                 'email' => $request->input('email'),
             ]
         );
-        // Actualizar usuario
+    
+        // Actualizar el usuario con todos los datos
         $user->update($userData);
-        // Redireccionar a la ruta index
-        return Redirect::route('user.index')
-            ->with('success', 'User updated successfully');
-    }
 
+        
+        return Redirect::route('user.index')
+            ->with('update', 'update');
+    }
+    
 
     public function destroy($id): RedirectResponse
     {
         User::find($id)->delete();
 
         return Redirect::route('user.index')
-            ->with('success', 'User deleted successfully');
+            ->with('delete', 'delete');
     }
 }

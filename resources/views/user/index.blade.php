@@ -34,10 +34,10 @@
                 @foreach($users as $user)
                 <tr>
                     <td>{{ $user->id }}</td>
-                    <td class="text-truncate">{{ $user->name.' '.$user->first_lastname.' '.$user->second_lastname }}</td>
+                    <td class="text-nowrap text-truncate">{{ $user->name.' '.$user->first_lastname.' '.$user->second_lastname }}</td>
                     <td class="text-nowrap">{{ $user->birthdate }}</td>
-                    <td class="text-nowrap text-truncate">{{ $user->phone }}</td>
-                    <td class="text-truncate">{{ $user->email }}</td>
+                    <td class="text-nowrap">{{ $user->phone }}</td>
+                    <td class="text-nowrap text-truncate">{{ $user->email }}</td>
                     <td>
                         <div class="d-flex align-items-center justify-content-center">
                             <div class="flex-shrink-0 rounded-circle overflow-hidden">
@@ -59,16 +59,15 @@
                         </button>
                     </td>
                     <td>
-                        <form action="{{ route('user.destroy', $user->id) }}" method="POST">
+                        <!-- Formulario / Botón para eliminar usuario -->
+                        <form action="{{ route('user.destroy',$user->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger btnDelete"
-                                data-title="{{__('Are you sure to delete this user?')}}"
-                                data-text="{{__('This action cannot be undone')}}"
-                                data-confirm-button-text="{{__('Yes, delete it')}}"
-                                data-cancel-button-text="{{__('Cancel')}}">
-                                <i class="fa-solid fa-user-xmark"></i>
-                            </button>
+                            <button type="submit" class="btn btnDelete btn-sm btn-outline-danger"
+                            data-title="{{__('Are you sure to delete this user?')}}"
+                            data-text="{{__('This action cannot be undone')}}"
+                            data-confirm-button-text="{{__('Yes, delete it')}}"
+                            data-cancel-button-text="{{__('Cancel')}}"><i class="fa-solid fa-trash"></i></button>
                         </form>
                     </td>
                 </tr>
@@ -85,6 +84,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
+                                <!-- Formulario de actualización -->
                                 <form method="POST" action="{{ route('user.update', $user->id) }}" id="updateUserForm{{ $user->id }}" role="form"
                                     enctype="multipart/form-data">
                                     @method('PUT')
@@ -96,8 +96,7 @@
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                     {{__('Close')}}
                                 </button>
-                                <button type="submit" class="btn btn-primary" 
-                                    form="updateUserForm{{ $user->id }}">{{__('Update')}}</button>
+                                <button type="submit" class="btn btn-primary" form="updateUserForm{{ $user->id }}">{{__('Update')}}</button>
                             </div>
                         </div>
                     </div>
@@ -144,27 +143,33 @@
     Entradas: [Errores, Formulario de registro, Formulario de edición]
     Salidas: [Ventana modal según el tipo]
 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    @if($errors->any())
-        
-        if ({{ $errors->has('name') || $errors->has('email') || $errors->has('phone') || $errors->has('birthdate') }}) {
-            const newUserModal = new bootstrap.Modal(document.getElementById('newUserModal'));
+    document.addEventListener('DOMContentLoaded', function() {
+        // Si session(modal) es para actualizar, existe el ID y hay errores -> mostrar el modal de actualización
+        @if (session('modal') == 'update' && session('user_id') && $errors->any())
+            var userId = '{{ session('user_id') }}';
+            var updateUserModal = new bootstrap.Modal(document.getElementById('updateUser' + userId));
+            updateUserModal.show();
+        // Si session(moda) es para agregar y hay errores -> mostrar el modal de registro
+        @elseif (session('modal') == 'new' && $errors->any())
+            var newUserModal = new bootstrap.Modal(document.getElementById('newUserModal'));
             newUserModal.show();
-        }
-        
-        // Si hay errores en los formularios de actualización
-        @foreach($users as $user)
-            @if($errors->has('updateUser'.$user->id))
-                const updateModal = new bootstrap.Modal(document.getElementById('updateUser{{ $user->id }}'));
-                updateModal.show();
-            @endif
-        @endforeach
-    @endif
-});
-</script>
+        @endif
+    });
 
+    // Valores para mensajes de alerta
+    @if(session()->has('store'))
+        var sessionType = @json(session('store')); // Su session es 'store'
+        var alertTitle = @json(__('User added successfully')); // Título del mensaje
+    @elseif(session()->has('update'))
+        var sessionType = @json(session('update')); // Su session es 'update'
+        var alertTitle = @json(__('User updated successfully')); // Título del mensaje
+    @elseif (session()->has('delete'))
+        var sessionType = @json(session('delete')); // Su session es 'delete'
+        var alertTitle = @json(__('User deleted successfully')); // Título del mensaje
+    @endif
+</script>
 
 
 @endsection

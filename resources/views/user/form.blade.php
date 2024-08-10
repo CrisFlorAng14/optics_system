@@ -48,5 +48,9 @@
             <input type="text" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user?->email) }}" id="email" placeholder="Email">
             {!! $errors->first('email', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
+
+        <!-- En el formulario de actualización -->
+        <input type="hidden" name="user_id" value="{{ $user->id }}">
+
     </div>
 </div>
