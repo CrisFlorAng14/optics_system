@@ -1,24 +1,85 @@
 @extends('layouts.app')
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/user/index.css') }}">
+<script src="{{ asset('js/user/user.js') }}"></script>
 <div class="container mt-2">
     <!-- ############## ENCABEZADO ################### -->
-    <div class="row justify-content-between align-items-center">
+    <!-- Formulario de búsqueda y ordenamiento -->
+    <form method="get" action="{{ route('user.index') }}" class="row justify-content-between" id="searchForm">
         <!-- Título -->
-        <div class="col-6 d-flex justify-content-start">
+        <div class="col-3 col-md-6 d-flex justify-content-start">
             <h2 class="fs-2">{{__('Users')}}</h2>
         </div>
+        <!-- Barra de búsqueda -->
+        <div class="col-9 col-md-6 mb-2 align-items-center">
+            <div class="d-flex flex-sm-row">
+                <div class="input-group">
+                    <input type="search" name="search" class="form-control mr-2 flex-grow-1" id="input-search"
+                        placeholder="{{__('Type for quick search or press for deep search')}}" value="{{ request('search') }}">
+                    <button class="btn input-group-text btn-search">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- ######## FILTROS ########## -->
+        <!-- Ordenar por... -->
+        <div class="col-4 col-md-3">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-filter"></i></span>
+                <select name="order_by" class="form-control form-control-sm" id="orderBySelect">
+                    <option value="" disabled selected>{{__('Order by')}}</option>
+                    <option value="id" {{ request('order_by') == 'id' ? 'selected' : '' }}>{{__('Default')}}</option>
+                    <option value="name" {{ request('order_by') == 'name' ? 'selected' : '' }}>{{__('Name')}}</option>
+                    <option value="first_lastname" {{ request('order_by') == 'first_lastname' ? 'selected' : '' }}>{{__('First last name')}}</option>
+                    <option value="second_lastname" {{ request('order_by') == 'second_lastname' ? 'selected' : '' }}>{{__('Second last name')}}</option>
+                    <option value="email" {{ request('order_by') == 'email' ? 'selected' : '' }}>{{__('Email')}}</option>
+                    <option value="birthdate" {{ request('order_by') == 'birthdate' ? 'selected' : '' }}>{{__('Birthdate')}}</option>
+                </select>
+            </div>
+        </div>
+        <!-- Ascendente o descendente -->
+        <div class="col-4 col-md-3">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-sort"></i></span>
+                <select name="order_direction" class="form-control form-control-sm" id="orderDirectionSelect">
+                    <option value="" disabled selected>{{__('Direction')}}</option>
+                    <option value="asc" {{ request('order_direction') == 'asc' ? 'selected' : '' }}>{{__('Ascending')}}</option>
+                    <option value="desc" {{ request('order_direction') == 'desc' ? 'selected' : '' }}>{{__('Descending')}}</option>
+                </select>
+            </div>
+        </div>
+        <!-- Filtrar por tipo -->
+        <div class="col-4 col-md-3">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-user-tag"></i></span>
+                <select name="user_type" class="form-control form-control-sm">
+                    <option value="" disabled selected>{{__('User type')}}</option>
+                </select>
+            </div>
+        </div>
+        
         <!-- Botón modal "Nuevo usuario" -->
-        <div class="col-6 d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#newUserModal">
+        <div class="col-12 col-md-3 d-flex justify-content-end mt-2 mt-md-0 mb-2 mb-md-0">
+            <button type="button" class="btn btn-sm btn-outline-success w-100" data-bs-toggle="modal" data-bs-target="#newUserModal">
                 <i class="fa-solid fa-user-plus"></i>
                 {{__('New User')}}
             </button>
         </div>
+    </form>
+    <!-- Mensaje si no hay registros -->
+    @if(isset($message_empty))
+    <div class="alert alert-danger mt-2" role="alert">
+        <i class="fa-solid fa-exclamation-triangle"></i> {{ $message_empty }}
+        <form action="{{ route('user.index') }}" method="get" class="d-flex flex-sm-row mt-2">
+            <input type="hidden" name="search">
+            <button class="btn btn-link"><i class="fa-solid fa-rotate"></i> {{__('Reload')}} </button>
+        </form>
     </div>
+    @else
     <!-- ############## TABLA ############# -->
     <div class="table-responsive">
-        <table class="table table-sm table-hover text-center align-middle">
+        <table class="table table-sm table-hover text-center align-middle" id="table-content">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -105,10 +166,16 @@
                 @endforeach
             </tbody>
         </table>
+        <!-- Mensaje rápido para tabla vacía -->
+        <div class="alert alert-danger" id="message-empty">
+            {{__('no matches in the 10 records shown, for a deeper search press the button with the icon')}}
+            <i class="fa-solid fa-search"></i>
+        </div>
         <div class="d-flex align-items-center justify-content-center">
             {{ $users->links() }}
         </div>
     </div>
+    @endif
 </div>
 
 <!-- Modal de registro de usuario -->
@@ -170,7 +237,30 @@
         var sessionType = @json(session('delete')); // Su session es 'delete'
         var alertTitle = @json(__('User deleted successfully')); // Título del mensaje
     @endif
-</script>
 
+    // var inputSearch = document.getElementById("input-search");
+    // inputSearch.addEventListener("keyup", function() {
+    //     var value = inputSearch.value.toLowerCase();
+    //     var rows = document.querySelectorAll("#table-content tr");
+    //     var found = false;
+        
+    //     rows.forEach(function(row) {
+    //         if (row.textContent.toLowerCase().indexOf(value) > -1) {
+    //             row.style.display = "";
+    //             found = true;
+    //         } else {
+    //             row.style.display = "none";
+    //         }
+    //     });
+
+    //     // Mostrar o ocultar el mensaje de 'message_empty' basado en los resultados encontrados
+    //     var messageEmpty = document.getElementById("message-empty");
+    //     if (!found) {
+    //         messageEmpty.style.display = "block";
+    //     } else {
+    //         messageEmpty.style.display = "none";
+    //     }
+    // });
+</script>
 
 @endsection

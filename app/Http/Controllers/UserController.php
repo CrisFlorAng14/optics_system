@@ -16,18 +16,46 @@ use Illuminate\Support\Facades\App;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Función para visualizar registros de usuarios
+     * Entradas: 
+     * - Valor de búsqueda: Cualquier palabra o número introducido
+     * - Tipo de orden: Nombre, Apellidos, Email, Fecha de nacimiento
+     * - Dirección de orden: Ascendente, Descendente
+     * - Tipo de usuario: Administrador, Empleado, Cliente
+     * Salidas: Registros filtrados según los valores de entrada
      */
     public function index(Request $request): View
     {
-        $users = User::paginate(10);
-    
+        // Se obtienen los valores de búsqueda (si existen)
+        $search = $request->input('search'); // Valor
+        $orderBy = $request->input('order_by'); // Orden
+        $orderDirection = $request->input('order_direction', 'asc'); //Dirección
+        
+        // Se crea una consulta según el valor recibido
+        $users = User::when($search, function($query, $search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('first_lastname', 'like', "%{$search}%")
+                  ->orWhere('second_lastname', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+        });
+        // Se ordenan los registros
+        if ($orderBy) {
+            $users->orderBy($orderBy, $orderDirection);
+        }
+        // Se activa la paginación de los registros
+        $users = $users->paginate(10);
         // Transformar las fechas en cada usuario de la colección paginada
         $users->getCollection()->transform(function ($user) {
             $user->birthdate = $this->dateTransform($user->birthdate);
             return $user;
         });
-        
+        // Validación si no hay registros con el valor de búsqueda
+        if($users->isEmpty()){
+            $message_empty = __('There are no records with the term "'.$search.'"');
+            return view('user.index', compact('message_empty', 'users'));
+        }
+        // Se muestra la vista
         return view('user.index', compact('users'));
     }
     /**

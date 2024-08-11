@@ -10,3 +10,15 @@
 .text-truncate {
     max-width: 150px;
 }
+.btn-search {
+    background-color: #1B9FA3 !important;
+    color: #fff;
+}
+.btn-search:hover {
+    background-color: #fff !important;
+    color: #1B9FA3;
+    border: solid 1px #1B9FA3;
+}
+#message-empty {
+    display: none;
+}
