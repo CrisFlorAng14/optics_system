@@ -21,13 +21,15 @@
                 </a>
             </li>
             <li>
-                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="{{ request()->is('products*') ? 'true' : 'false' }}" class="dropdown-toggle">
                     <i class="fa-solid fa-glasses"></i>
                     {{__('Products')}}
                 </a>
-                <ul class="collapse list-unstyled" id="homeSubmenu">
-                    <li>
-                        <a href="#">{{__('Catalogue')}}</a>
+                <ul class="collapse list-unstyled {{ request()->is('products*') ? 'show' : '' }}" id="homeSubmenu">
+                    <li class="{{ request()->is('products') ? 'active' : '' }}">
+                        <a href="{{ route('product.index') }}">
+                            {{__('Catalogue')}}
+                        </a>
                     </li>
                     <li>
                         <a href="#">{{__('Inventory')}}</a>

@@ -1,0 +1,20 @@
+.input-group-text {
+    background-color: #CFCFCF;
+}
+
+#descriptionInput {
+    height: 5rem;
+}
+/* Ocultar los controles de número en Input de tipo number */
+.no-arrows {
+    -moz-appearance: textfield; /* Firefox */
+    -webkit-appearance: none; /* Chrome, Safari, Edge, Opera */
+    appearance: none; /* Navegadores modernos */
+}
+
+/* Ocultar los controles de número en navegadores WebKit (Safari y Chrome) */
+.no-arrows::-webkit-inner-spin-button,
+.no-arrows::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

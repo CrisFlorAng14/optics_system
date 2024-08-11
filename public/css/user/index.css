@@ -13,6 +13,7 @@
 .btn-search {
     background-color: #1B9FA3 !important;
     color: #fff;
+    transition: 0.5s;
 }
 .btn-search:hover {
     background-color: #fff !important;
