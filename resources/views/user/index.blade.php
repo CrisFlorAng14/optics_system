@@ -16,7 +16,7 @@
                 <div class="input-group">
                     <input type="search" name="search" class="form-control mr-2 flex-grow-1" id="input-search"
                         placeholder="{{__('Type for quick search or press for deep search')}}" value="{{ request('search') }}">
-                    <button class="btn input-group-text btn-search">
+                    <button class="input-group-text btn-search">
                         <i class="fa-solid fa-search"></i>
                     </button>
                 </div>
@@ -237,30 +237,6 @@
         var sessionType = @json(session('delete')); // Su session es 'delete'
         var alertTitle = @json(__('User deleted successfully')); // Título del mensaje
     @endif
-
-    // var inputSearch = document.getElementById("input-search");
-    // inputSearch.addEventListener("keyup", function() {
-    //     var value = inputSearch.value.toLowerCase();
-    //     var rows = document.querySelectorAll("#table-content tr");
-    //     var found = false;
-        
-    //     rows.forEach(function(row) {
-    //         if (row.textContent.toLowerCase().indexOf(value) > -1) {
-    //             row.style.display = "";
-    //             found = true;
-    //         } else {
-    //             row.style.display = "none";
-    //         }
-    //     });
-
-    //     // Mostrar o ocultar el mensaje de 'message_empty' basado en los resultados encontrados
-    //     var messageEmpty = document.getElementById("message-empty");
-    //     if (!found) {
-    //         messageEmpty.style.display = "block";
-    //     } else {
-    //         messageEmpty.style.display = "none";
-    //     }
-    // });
 </script>
 
 @endsection
