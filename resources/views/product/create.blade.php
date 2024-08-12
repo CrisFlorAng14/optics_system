@@ -62,9 +62,9 @@
     <div class="col-12 col-md-6">
         <div class="input-group mt-2">
             <span class="input-group-text"><i class="fa-solid fa-cubes-stacked"></i></span>
-            <input type="number" name="stock" class="form-control no-arrows @error('stock') is-invalid @enderror" 
-                placeholder="{{__('Stock')}}"
-                aria-label="{{__('Stock')}}" aria-describedby="stock" value="{{ old('stock') }}">
+            <input type="number" name="stock" class="form-control no-arrows @error('stock') is-invalid @enderror"
+                placeholder="{{__('Stock')}}" aria-label="{{__('Stock')}}" aria-describedby="stock"
+                value="{{ old('stock') }}">
             @error('stock')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
@@ -82,4 +82,26 @@
             </div>
         </div>
     </div>
+    <!-- Imágen -->
+    <div class="col-12 col-md-10 justify-content-center mt-2">
+        <div class="file-drop-area">
+            <span class="fake-btn">{{__('Upload file')}}</span>
+            <span class="remove-image-btn btn btn-danger">{{__('Remove image')}}</span>
+            <span class="file-msg text-secondary">{{__('Drag your image here')}}</span>
+            <input class="file-input" type="file" name="image">
+        </div>
+    </div>
+    <!-- Previsualización de la imágen -->
+    <div class="col-12 col-md-2 mt-2 d-flex justify-content-center">
+        <div class="image-container card rounded">
+            <img id="image-preview" class="img-fluid" src="{{ asset('resources/image-default.png') }}" 
+                alt="{{__('Image preview')}}">
+        </div>
+    </div>
+
 </div>
+<!-- Script para comportamiento de imágen -->
+<script>
+    window.imageDefaultUrl = "{{ asset('resources/image-default.png') }}";
+</script>
+<script src="{{ asset('js/product/create.js') }}"></script>
