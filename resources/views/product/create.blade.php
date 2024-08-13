@@ -82,25 +82,31 @@
             </div>
         </div>
     </div>
-    <!-- Imágen -->
+    <!-- imagen -->
     <div class="col-12 col-md-10 justify-content-center mt-2">
         <div class="file-drop-area">
-            <span class="fake-btn">{{__('Upload file')}}</span>
-            <span class="remove-image-btn btn btn-danger">{{__('Remove image')}}</span>
-            <span class="file-msg text-secondary">{{__('Drag your image here')}}</span>
-            <input class="file-input" type="file" name="image">
-        </div>
-    </div>
-    <!-- Previsualización de la imágen -->
-    <div class="col-12 col-md-2 mt-2 d-flex justify-content-center">
-        <div class="image-container card rounded">
-            <img id="image-preview" class="img-fluid" src="{{ asset('resources/image-default.png') }}" 
-                alt="{{__('Image preview')}}">
+            <span class="fake-btn">{{ __('Upload file') }}</span>
+            <span class="remove-image-btn btn btn-danger" style="display:none;">{{ __('Remove image') }}</span>
+            <span class="file-msg text-secondary">{{ __('Drag your image here') }}</span>
+            <input class="file-input @error('image') is-invalid @enderror" type="file" name="image">
+            @error('image')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+            @enderror
         </div>
     </div>
 
+    <!-- Previsualización de la imagen -->
+    <div class="col-12 col-md-2 mt-2 d-flex justify-content-center">
+        <div class="image-container card rounded">
+            <img id="image-preview" class="img-fluid" src="{{ asset('resources/image-default.png') }}"
+                alt="{{__('Image preview')}}">
+        </div>
+    </div>
 </div>
-<!-- Script para comportamiento de imágen -->
+
+<!-- Script para comportamiento de imagen -->
 <script>
     window.imageDefaultUrl = "{{ asset('resources/image-default.png') }}";
 </script>

@@ -25,10 +25,10 @@ class ProductRequest extends FormRequest
 			'name_product' => 'required|string|max:100',
 			'brand' => 'required|string|max:50',
 			'category' => 'required|string|max:50',
-			'price' => 'required|float',
+			'price' => 'required|numeric',
 			'stock' => 'required|integer',
 			'description' => 'nullable|string',
-			'image' => 'nullable|string',
+			'image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
         ];
     }
 }

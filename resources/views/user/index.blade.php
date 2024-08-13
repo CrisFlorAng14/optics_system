@@ -105,7 +105,7 @@
                                 @if($user->photo == NULL)
                                 <img src="{{ asset('resources/user-default.jpg') }}" class="img-fluid">
                                 @else
-                                
+                                <img src="{{ asset('uploads/user/'.$user->photo) }}">
                                 @endif
                             </div>
                         </div>

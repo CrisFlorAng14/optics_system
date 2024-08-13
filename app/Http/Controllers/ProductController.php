@@ -9,6 +9,8 @@ use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
+use Carbon\Carbon;
+
 class ProductController extends Controller
 {
     /**
@@ -37,12 +39,35 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request): RedirectResponse
     {
-        Product::create($request->validated());
+        $data = $request->validated();
 
-        return Redirect::route('products.index')
-            ->with('success', 'Product created successfully.');
+        $imageName = $this->imageUpload($request);
+        Product::create([
+            'name_product' => $data['name_product'],
+            'brand' => $data['brand'],
+            'category' => $data['category'],
+            'price' => $data['price'],
+            'stock' => $data['stock'],
+            'description' => $data['description'],
+            'image' => $imageName,
+        ]);
+
+        return Redirect::route('product.index')
+            ->with('store', 'store');
     }
 
+    private function imageUpload($request) {
+        if($request->hasFile('image')){
+            $file = $request->file('image');
+
+            if($file->isValid()){
+                $imageName = date('YmdHis').'.png';
+                $file->move('uplaods/product/',$imageName);
+                return $imageName;
+            }
+        }
+        return null;
+    }
     /**
      * Display the specified resource.
      */
@@ -60,7 +85,7 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
 
-        return view('product.edit', compact('product'));
+        return view('product.form', compact('product'));
     }
 
     /**

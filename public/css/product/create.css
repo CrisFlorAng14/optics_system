@@ -1,3 +1,4 @@
+/* Color de fondo de los iconos de los Inputs */
 .input-group-text {
     background-color: #CFCFCF;
 }
@@ -20,7 +21,7 @@
     margin: 0;
 }
 /* ------------------------------------------------- */
-/* Drag and drop */
+/* Área de "Arrastra y suelta" */
 .file-drop-area {
     position: relative;
     display: flex;
@@ -41,6 +42,7 @@
     border-color: #1B9FA3;
 }
 
+/* Estilos de botón para agregar un archivo */
 .fake-btn {
     box-sizing: border-box;
     flex-shrink: 0;
@@ -53,19 +55,12 @@
     cursor: pointer;
     transition: background-color 0.5s, color 0.5s;
 }
-
-.fake-btn:hover {
-    background-color: #fff;
-    color: #1B9FA3;
-    border-color: #1B9FA3;
-}
-
 .file-drop-area:hover .fake-btn {
     background-color: #fff;
     color: #1B9FA3;
     border-color: #1B9FA3;
 }
-
+/* Input de archivo */
 .file-input {
     position: absolute;
     left: 0;
@@ -75,6 +70,7 @@
     cursor: pointer;
     opacity: 0;
 }
+/* Botón para remover imagen */
 .remove-image-btn {
     z-index: 1;
     display: none; /* Ocultar por defecto */
@@ -89,7 +85,6 @@
     cursor: pointer;
     transition: background-color 0.5s, color 0.5s;
 }
-
 .remove-image-btn:hover {
     background-color: #fff;
     color: #FF4C4C;
@@ -97,11 +92,11 @@
 }
 
 
-/* Contenedor de la imagen con relación de aspecto */
+/* Contenedor de la imagen */
 .image-container {
     position: relative;
     width: 100%;
-    padding-top: 100%; /* Ajusta la relación de aspecto aquí (75% para 4:3) */
+    padding-top: 100%;
     overflow: hidden;
     border-radius: 5px;
 }

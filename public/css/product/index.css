@@ -1,0 +1,22 @@
+/* Tamaño máximo para celdas de texto */
+.text-truncate {
+    max-width: 200px;
+}
+/* Contenedor de la imagen */
+.image-prod-container {
+    position: relative;
+    width: 50%;
+    padding-top: 50%;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+/* Imagen ajustada al contenedor */
+.image-prod-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
