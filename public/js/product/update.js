@@ -26,6 +26,7 @@ function showRemoveImageBtn() {
 function hideRemoveImageBtn() {
     fakeBtn.style.display = 'block';
     removeImageBtn.style.display = 'none';
+    document.getElementById('inputHidden').value = null;
 }
 
 // Función para eliminar la imagen y restaurar el estado inicial
