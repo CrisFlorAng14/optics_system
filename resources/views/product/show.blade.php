@@ -3,23 +3,33 @@
 <link rel="stylesheet" href="{{ asset('css/product/show.css') }}">
 <div class="container mt-2">
     <div class="row">
+        <!-- Botón para volver a la vista de registros -->
         <div class="col-4 mb-2">
-            <a href="{{ route('product.index') }}" class="w-100 btn btn-secondary">
+            <a href="{{ route('product.index') }}" class="w-100 btn btn-outline-secondary">
                 <i class="fa-solid fa-rotate-left"></i>
                 {{__('Back')}}
             </a>
         </div>
+        <!-- Botón para editar registro de producto -->
         <div class="col-4">
-            <a href="{{ route('product.edit',$product->id) }}" class="w-100 btn btn-primary">
+            <a href="{{ route('product.edit',$product->id) }}" class="w-100 btn btn-outline-primary">
                 <i class="fa-solid fa-pen"></i>
                 {{__('Edit')}}
             </a>
         </div>
         <div class="col-4">
-            <a href="" class="w-100 btn btn-danger">
-                <i class="fa-solid fa-trash"></i>
-                {{__('Delete')}}
-            </a>
+            <!-- Formulario / Botón para eliminar producto -->
+            <form action="{{ route('product.destroy',$product->id) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="w-100 btn btnDelete btn-outline-danger"
+                    data-title="{{__('Are you sure to delete this product?')}}"
+                    data-text="{{__('This action cannot be undone')}}"
+                    data-confirm-button-text="{{__('Yes, delete it')}}" data-cancel-button-text="{{__('Cancel')}}"><i
+                        class="fa-solid fa-trash"></i>
+                    {{__('Delete')}}
+                </button>
+            </form>
         </div>
         <!-- ######### IMAGEN ####### -->
         <!-- Imagen del producto -->
@@ -57,7 +67,8 @@
                         </div>
                     </div>
                     <!-- Stock o cantidad disponible -->
-                    <p class="fw-normal text-dark t-stock">{{__('Available: ')}} <strong>{{ $product->stock }}</strong></p>
+                    <p class="fw-normal text-dark t-stock">{{__('Available: ')}} <strong>{{ $product->stock }}</strong>
+                    </p>
                     <!-- Descripción -->
                     <p class="fw-semibold text-dark mb-0">{{__('Description')}}</p>
                     <p class="fw-normal text-dark fs-6 mb-0">{!! nl2br(e($product->description)) !!}</p>
