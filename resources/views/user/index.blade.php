@@ -227,6 +227,7 @@
     });
 
     // Valores para mensajes de alerta
+    var icon = @json('success');
     @if(session()->has('store'))
         var sessionType = @json(session('store')); // Su session es 'store'
         var alertTitle = @json(__('User added successfully')); // Título del mensaje
