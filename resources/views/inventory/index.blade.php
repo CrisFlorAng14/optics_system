@@ -1,73 +1,250 @@
 @extends('layouts.app')
-
-@section('template_title')
-    Inventories
-@endsection
-
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-
-                            <span id="card_title">
-                                {{ __('Inventories') }}
-                            </span>
-
-                             <div class="float-right">
-                                <a href="{{ route('inventories.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
-                                </a>
-                              </div>
-                        </div>
-                    </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
-
-                    <div class="card-body bg-white">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead class="thead">
-                                    <tr>
-                                        <th>No</th>
-                                        
-									<th >Type</th>
-									<th >Fk Idproduct</th>
-
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($inventories as $inventory)
-                                        <tr>
-                                            <td>{{ ++$i }}</td>
-                                            
-										<td >{{ $inventory->type }}</td>
-										<td >{{ $inventory->fk_idProduct }}</td>
-
-                                            <td>
-                                                <form action="{{ route('inventories.destroy', $inventory->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('inventories.show', $inventory->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('inventories.edit', $inventory->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+<link rel="stylesheet" href="{{ asset('css/inventory/index.css') }}">
+<div class="container mt-2">
+    <!-- ############## ENCABEZADO ################### -->
+    <!-- Formulario de búsqueda y ordenamiento -->
+    <form action="{{ route('inventory.index') }}" method="get" class="row justify-content-between" id="searchForm">
+        <!-- Título -->
+        <div class="col-3 col-md-6 d-flex justify-content-start">
+            <h2 class="fs-2">{{__('Inventory')}}</h2>
+        </div>
+        <!-- Barra de búsqueda -->
+        <div class="col-9 col-md-6 mb-2 align-items-center">
+            <div class="d-flex flex-sm-row">
+                <div class="input-group">
+                    <input type="search" name="search" class="form-control mr-2 flex-grow-1" id="input-search"
+                        placeholder="{{__('Type for quick search or press for deep search')}}"
+                        value="{{ request('search') }}">
+                    <button class="input-group-text btn-search">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
                 </div>
-                {!! $inventories->withQueryString()->links() !!}
+            </div>
+        </div>
+        <!-- ######## FILTROS ########## -->
+        <!-- Ordenar por... -->
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-filter"></i></span>
+                <select name="order_by" class="form-control form-control-sm" id="orderBySelect">
+                    <option value="" disabled selected>{{__('Order by')}}</option>
+                    <option value="id" {{ request('order_by') == 'id' ? 'selected' : '' }}>{{__('Default')}}</option>
+                    <option value="name_product" {{ request('order_by') == 'name_product' ? 'selected' : '' }}>
+                        {{__('Name Product')}}</option>
+                    <option value="brand" {{ request('order_by') == 'brand' ? 'selected' : '' }}>
+                        {{__('Brand')}}</option>
+                    <option value="category" {{ request('order_by') == 'category' ? 'selected' : '' }}>
+                        {{__('Category')}}</option>
+                    <option value="price" {{ request('order_by') == 'price' ? 'selected' : '' }}>{{__('Price')}}
+                    </option>
+                    <option value="stock" {{ request('order_by') == 'stock' ? 'selected' : '' }}>
+                        {{__('Stock')}}</option>
+                </select>
+            </div>
+        </div>
+        <!-- Ascendente o descendente -->
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-sort"></i></span>
+                <select name="order_direction" class="form-control form-control-sm" id="orderDirectionSelect">
+                    <option value="" disabled selected>{{__('Direction')}}</option>
+                    <option value="asc" {{ request('order_direction') == 'asc' ? 'selected' : '' }}>{{__('Ascending')}}
+                    </option>
+                    <option value="desc" {{ request('order_direction') == 'desc' ? 'selected' : '' }}>
+                        {{__('Descending')}}</option>
+                </select>
+            </div>
+        </div>
+        <!-- Tipo de inventario -->
+        <div class="col-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-tag"></i></span>
+                <select name="filter" class="form-control form-control-sm" id="filterTypeSelect">
+                    <option value="" disabled selected>{{__('Type')}}</option>
+                    <option value="receipts">{{__('Receipts')}}</option>
+                    <option value="shipments">{{__('Shipments')}}</option>
+                    <option value="buys">{{__('Buys')}}</option>
+                    <option value="devolutions">{{__('Devolution')}}</option>
+                    <option value="sales">{{__('Sales')}}</option>
+                    <option value="wastes">{{__('Wastes')}}</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <!-- ########### FORMULARIO DE REGISTRO DE INVENTARIO ############ -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card mt-2 px-5 py-3">
+                <form action="{{ route('inventory.store') }}" method="POST" id="newInventoryForm">
+                    @csrf
+                    <!-- Selección del producto -->
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-boxes-packing"></i></span>
+                        <select class="form-control @error('fk_idProduct') is-invalid @enderror" name="fk_idProduct">
+                            <option value="" disabled {{ old('fk_idProduct') == '' ? 'selected' : '' }}>
+                                {{ __('Select a product') }}</option>
+                            @foreach($products as $product)
+                            <option value="{{ $product->id }}"
+                                {{ old('fk_idProduct') == $product->id ? 'selected' : '' }}>
+                                {{ $product->id .'. '.$product->name_product }}
+                            </option>
+                            @endforeach
+                        </select>
+
+                        @error('fk_idProduct')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+
+                    <!-- Tipo de inventario (Entrada o Salida) -->
+                    <div class="mt-3">
+                        <div class="row mx-0 mx-md-5 px-0">
+                            <div class="col-12">
+                                <div class="d-flex flex-wrap justify-content-between">
+                                    <!-- Tipo compra -->
+                                    <div class="form-check mx-0 mx-md-2 px-0 px-md-0">
+                                        <input type="radio" name="type" id="buy"
+                                            class="form-check-input @error('type') is-invalid @enderror" value="buy"
+                                            {{ old('type') == 'buy' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="buy">{{ __('Buy') }}</label>
+                                    </div>
+                                    <!-- Tipo venta -->
+                                    <div class="form-check mx-0 mx-md-2 px-0 px-md-0">
+                                        <input type="radio" name="type" id="sale"
+                                            class="form-check-input @error('type') is-invalid @enderror" value="sale"
+                                            {{ old('type') == 'sale' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="sale">{{ __('Sale') }}</label>
+                                    </div>
+                                    <!-- Tipo devolución -->
+                                    <div class="form-check mx-0 mx-md-2 px-0 px-md-0">
+                                        <input type="radio" name="type" id="devolution"
+                                            class="form-check-input @error('type') is-invalid @enderror"
+                                            value="devolution" {{ old('type') == 'devolution' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="devolution">{{ __('Devolution') }}</label>
+                                    </div>
+                                    <!-- Tipo desecho -->
+                                    <div class="form-check mx-0 mx-md-2 px-0 px-md-0">
+                                        <input type="radio" name="type" id="waste"
+                                            class="form-check-input @error('type') is-invalid @enderror" value="waste"
+                                            {{ old('type') == 'waste' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="waste">{{ __('Waste') }}</label>
+                                    </div>
+                                </div>
+
+                                @error('type')
+                                <div class="invalid-feedback d-block">
+                                    <strong>{{ $message }}</strong>
+                                </div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Botón para registro de inventario -->
+                    <div class="mt-2">
+                        <button type="submit" class="btn btn-outline-success w-100" form="newInventoryForm">
+                            <i class="fa-solid fa-square-plus"></i>
+                            {{__('Add to Inventory')}}
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
+
+    <!-- ######### CONTENIDO DE REGISTROS ########## -->
+    <!-- Mensaje si no hay registros que coincidan -->
+    @if(isset($message_empty))
+    <div class="alert alert-danger mt-2" role="alert">
+        <i class="fa-solid fa-exclamation-triangle"></i> {{ $message_empty }}
+        <form action="{{ route('inventory.index') }}" method="get" class="d-flex flex-sm-row mt-2">
+            <input type="hidden" name="search">
+            <button class="btn btn-link"><i class="fa-solid fa-rotate"></i> {{__('Reload')}} </button>
+        </form>
+    </div>
+    @else
+    <!-- Tabla de registros -->
+    <div class="table-responsive mt-2">
+        <table class="table table-sm table-hover text-center align-middle" id="table-content">
+            <tbody class="table-group-divider">
+                @foreach($inventories as $inventory)
+                @if($loop->first || $inventories[$loop->index - 1]->fk_idProduct != $inventory->fk_idProduct)
+                <!-- Fila principal que muestra el nombre del producto -->
+                <tr data-bs-toggle="collapse" data-bs-target="#collapse{{ $inventory->fk_idProduct }}"
+                    aria-expanded="false" aria-controls="collapse{{ $inventory->fk_idProduct }}" class="product-row">
+                    <td>{{ $inventory->fk_idProduct }}</td>
+                    <td id="img-content">
+                        <div class="image-prod-container">
+                            @if($inventory->image)
+                            <img src="{{ asset('uploads/product/'.$inventory->image) }}" class="img-fluid">
+                            @else
+                            <img src="{{ asset('resources/image-default.png') }}" class="img-fluid">
+                            @endif
+                        </div>
+                    </td>
+                    <td class="text-truncate text-nowrap">{{ $inventory->name_product }}</td>
+                </tr>
+                @endif
+                <!-- Fila colapsable que muestra los tipos y botones -->
+                @if($loop->first || $inventories[$loop->index - 1]->fk_idProduct != $inventory->fk_idProduct)
+                <tr class="collapse" id="collapse{{ $inventory->fk_idProduct }}">
+                    <td colspan="3" class="p-0">
+                        <table class="table table-sm table-hover mb-0">
+                            @foreach($inventories->where('fk_idProduct', $inventory->fk_idProduct) as $item)
+                            <tr>
+                                <td class="col-6 text-start align-middle">
+                                    <p class="text-dark fw-normal fs-6 mb-0">{{ $item->type }}</p>
+                                </td>
+                                <td class="col-6 text-end align-middle">
+                                    <button class="btn btn-sm btn-outline-success me-2">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary me-2">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger me-2">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </table>
+                    </td>
+                </tr>
+                @endif
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+</div>
+
+@if(session('exists'))
+<script>
+    var icon = @json('success')
+    // Valores para mensajes de alerta
+    @if(session()->has('store'))
+        var sessionType = @json(session('store')); // Su session es 'store'
+        var alertTitle = @json(__('Row added successfully')); // Título del mensaje
+    @elseif(session()->has('update'))
+        var sessionType = @json(session('update')); // Su session es 'update'
+        var alertTitle = @json(__('Row updated successfully')); // Título del mensaje
+    @elseif (session()->has('delete'))
+        var sessionType = @json(session('delete')); // Su session es 'delete'
+        var alertTitle = @json(__('Row deleted successfully')); // Título del mensaje
+    @elseif (session()->has('exists'))
+        var sessionType = @json(session('exists'));
+        var alertTitle = @json(__('Row already exists')); // Título del mensaje
+        var icon = @json('warning')
+    @endif
+</script>
+@endif
+
 @endsection

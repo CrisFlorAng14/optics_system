@@ -25,14 +25,17 @@
                     <i class="fa-solid fa-glasses"></i>
                     {{__('Products')}}
                 </a>
-                <ul class="collapse list-unstyled {{ request()->is('products*') ? 'show' : '' }}" id="homeSubmenu">
+                <ul class="collapse list-unstyled {{ request()->is('products*') || request()->is('inventories*') 
+                    ? 'show' : '' }}" id="homeSubmenu">
                     <li class="{{ request()->is('products') ? 'active' : '' }}">
                         <a href="{{ route('product.index') }}">
                             {{__('Catalogue')}}
                         </a>
                     </li>
-                    <li>
-                        <a href="#">{{__('Inventory')}}</a>
+                    <li class="{{ request()->is('inventories') ? 'active' : '' }}">
+                        <a href="{{ route('inventory.index') }}">
+                            {{__('Inventory')}}
+                        </a>
                     </li>
                 </ul>
             </li>

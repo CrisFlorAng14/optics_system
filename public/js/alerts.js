@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function alertMessage() {
         Swal.fire({
             position: 'center',
-            icon: 'success',
+            icon: icon,
             title: alertTitle,
             showConfirmButton: false,
             timer: 1500,
