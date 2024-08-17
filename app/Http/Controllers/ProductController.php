@@ -46,14 +46,32 @@ class ProductController extends Controller
         // Se activa la paginación de los registros
         $products = $products->paginate(10);
         // Validación si no hay registros con el valor de búsqueda
-        if($products->isEmpty()){
-            $message_empty = __('There are no records with the term "'.$search.'"');
-            return view('product.index', compact('message_empty', 'products'));
-        }
+        $message_empty = $this->validateRows($products, $search);
         // Se muestra la vista
-        return view('product.index', compact('products'));
+        return view('product.index', compact('products', 'message_empty'));
     }
 
+    /**
+     * Función para validar si hay registros
+     * Entrada: [ 
+     * - Registros de productos
+     * - Valor de búsqueda
+     * ]
+     * Salida: Mensaje de error
+     */
+    private function validateRows($products, $search){
+        // Se valida si hay registros vacios
+        if($products->isEmpty()){
+            // Se valida si hay valor de búsqueda
+            if($search){
+                return __('There are no records with the term "'.$search.'"');
+            }else{
+                return __('There are no records to show');
+            }
+        }
+        // Retornar NULL por defecto
+        return null;
+    }
     /**
      * Función para almacenar nuevo registro de producto
      * Entradas: Datos del nuevo producto [

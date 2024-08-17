@@ -166,6 +166,13 @@
     <!-- Tabla de registros -->
     <div class="table-responsive mt-2">
         <table class="table table-sm table-hover text-center align-middle" id="table-content">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>{{__('Image')}}</th>
+                    <th>{{__('Product')}}</th>
+                </tr>
+            </thead>
             <tbody class="table-group-divider">
                 @foreach($inventories as $inventory)
                 @if($loop->first || $inventories[$loop->index - 1]->fk_idProduct != $inventory->fk_idProduct)
@@ -209,17 +216,11 @@
                                     @endswitch
                                 </td>
                                 <td class="col-6 text-end align-middle">
-                                    <button class="btn btn-sm btn-outline-success me-2">
+                                    <button class="btn btn-sm btn-success me-2">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-primary me-2">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary me-2">
+                                    <button class="btn btn-sm btn-secondary me-2">
                                         <i class="fa-solid fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger me-2">
-                                        <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -231,6 +232,14 @@
                 @endforeach
             </tbody>
         </table>
+        <!-- Mensaje rápido para tabla vacía -->
+        <div class="alert alert-danger" id="message-empty">
+            {{__('no matches in the 10 records shown, for a deeper search press the button with the icon')}}
+            <i class="fa-solid fa-search"></i>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+            {{ $inventories->links() }}
+        </div>
     </div>
     @endif
 </div>

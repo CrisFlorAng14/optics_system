@@ -51,12 +51,26 @@ class UserController extends Controller
             return $user;
         });
         // Validación si no hay registros con el valor de búsqueda
-        if($users->isEmpty()){
-            $message_empty = __('There are no records with the term "'.$search.'"');
-            return view('user.index', compact('message_empty', 'users'));
-        }
+        $message_empty = $this->validateRows($users, $search);
         // Se muestra la vista
-        return view('user.index', compact('users'));
+        return view('user.index', compact('users', 'message_empty'));
+    }
+    /**
+     * Función para validar existencia de usuarios
+     * Entrada: [
+     * - Registros de usuarios
+     * - Valor de búsqueda
+     * ]
+     * Salida: Mensaje de error
+     */
+    private function validateRows($users, $search){
+        if($users->isEmpty()){
+            if($search){
+                return __('There are no records with the term "'.$search.'"');
+            }else{
+                return __('There are no records to show');
+            }
+        }
     }
     /**
      * Función para transformar la fecha según el idioma

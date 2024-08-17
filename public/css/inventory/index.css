@@ -29,3 +29,6 @@
 .product-row {
     cursor: pointer;
 }
+#message-empty {
+    display: none;
+}
