@@ -55,7 +55,7 @@
                 {{__('Blog')}}
             </a>
 
-            <a href="" class="col-sm-3 mb-3 mx-md-2 btn btn-lg btn-block p-4 d-button text-break"
+            <a href="{{ route('date.index') }}" class="col-sm-3 mb-3 mx-md-2 btn btn-lg btn-block p-4 d-button text-break"
                 style="background-color:#6000E2;">
                 <i class="fa-solid fa-calendar-days"></i><br>
                 {{__('Calendar')}}

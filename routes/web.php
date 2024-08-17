@@ -32,3 +32,5 @@ Route::prefix('inventories')->name('inventory.')->group(function() {
     Route::get('/', [App\Http\Controllers\InventoryController::class, 'index'])->name('index');
     Route::post('/', [App\Http\Controllers\InventoryController::class, 'store'])->name('store');
 });
+
+Route::get('/', [App\Http\Controllers\AppointmentController::class, 'index'])->name('date.index');
