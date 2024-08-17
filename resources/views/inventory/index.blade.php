@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/inventory/index.css') }}">
+<script src="{{ asset('js/inventory/index.js') }}"></script>
 <div class="container mt-2">
     <!-- ############## ENCABEZADO ################### -->
     <!-- Formulario de búsqueda y ordenamiento -->
@@ -29,17 +30,12 @@
                 <span class="input-group-text"><i class="fa-solid fa-filter"></i></span>
                 <select name="order_by" class="form-control form-control-sm" id="orderBySelect">
                     <option value="" disabled selected>{{__('Order by')}}</option>
-                    <option value="id" {{ request('order_by') == 'id' ? 'selected' : '' }}>{{__('Default')}}</option>
                     <option value="name_product" {{ request('order_by') == 'name_product' ? 'selected' : '' }}>
                         {{__('Name Product')}}</option>
-                    <option value="brand" {{ request('order_by') == 'brand' ? 'selected' : '' }}>
-                        {{__('Brand')}}</option>
-                    <option value="category" {{ request('order_by') == 'category' ? 'selected' : '' }}>
-                        {{__('Category')}}</option>
-                    <option value="price" {{ request('order_by') == 'price' ? 'selected' : '' }}>{{__('Price')}}
-                    </option>
-                    <option value="stock" {{ request('order_by') == 'stock' ? 'selected' : '' }}>
-                        {{__('Stock')}}</option>
+                    <option value="fk_idProduct" {{ request('order_by') == 'fk_idProduct' ? 'selected' : '' }}>
+                        {{__('ID Product')}}</option>
+                    <option value="id" {{ request('order_by') == 'id' ? 'selected' : '' }}>
+                        {{__('ID Inventory')}}</option>
                 </select>
             </div>
         </div>
@@ -197,7 +193,20 @@
                             @foreach($inventories->where('fk_idProduct', $inventory->fk_idProduct) as $item)
                             <tr>
                                 <td class="col-6 text-start align-middle">
-                                    <p class="text-dark fw-normal fs-6 mb-0">{{ $item->type }}</p>
+                                    @switch($item->type)
+                                        @case('buy')
+                                            <p class="text-dark fw-normal fs-6 mb-0">{{__('Buy')}}</p>
+                                        @break
+                                        @case('devolution')
+                                            <p class="text-dark fw-normal fs-6 mb-0">{{__('Devolution')}}</p>
+                                        @break
+                                        @case('sale')
+                                            <p class="text-dark fw-normal fs-6 mb-0">{{__('Sale')}}</p>
+                                        @break
+                                        @case('waste')
+                                            <p class="text-dark fw-normal fs-6 mb-0">{{__('Waste')}}</p>
+                                        @break
+                                    @endswitch
                                 </td>
                                 <td class="col-6 text-end align-middle">
                                     <button class="btn btn-sm btn-outline-success me-2">
